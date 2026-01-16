@@ -6,8 +6,6 @@ function getComputerChoice(){
 const num = getComputerChoice();
 
 
-
-
 switch(num){
     case 0:
         word = "rock";
@@ -23,5 +21,23 @@ switch(num){
     default:
         console.log("Invalid value");
 }
+
+function getHumanChoice(){
+    let input = prompt("Choose between Rock, Paper and Scissors");
+    if(input === null){
+        return "Game over";
+    }
+    return input.toLowerCase();
+}
+
+const humanChoice = getHumanChoice();
+
+
+
+
+
+
+
+
 
 
