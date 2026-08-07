@@ -1,131 +1,88 @@
-function getComputerChoice(){
-    let num = Math.floor(Math.random() * 3);
-    switch(num){
-        case 0: return "rock";
-        case 1: return "paper";
-        case 2: return "scissors";
-    }
-
-}
-
-
-
-
-
-const rock = document.createElement("button");
-const paper = document.createElement("button");
-const scissors = document.createElement("button");
-
-rock.textContent = "Rock";
-paper.textContent = "Paper";
-scissors.textContent = "Scissors";
-document.body.appendChild(paper);
-document.body.appendChild(rock);
-document.body.appendChild(scissors);
-
-rock.addEventListener("click", () => {
-    const computerChoice = getComputerChoice();
-    playRound("rock",computerChoice);
-})
-
-paper.addEventListener("click", () => {
-    const computerChoice = getComputerChoice();
-    playRound("paper",computerChoice);
-})
-
-scissors.addEventListener("click", () => {
-    const computerChoice = getComputerChoice();
-    playRound("scissors",computerChoice);
-})
-
-
-const result = document.createElement("div");
-result.id = "result";
-document.body.appendChild(result);
-
-const roundMessage = document.createElement("p");
-const scoreDisplay = document.createElement("p");
-result.appendChild(roundMessage);
-result.appendChild(scoreDisplay);
-
-
-
-
 let humanScore = 0;
- let computerScore = 0;
+let computerScore = 0;
+let isGameOver = false;
 
+// DOM Elements
+const humanScoreEl = document.getElementById("human-score");
+const computerScoreEl = document.getElementById("computer-score");
+const roundMessageEl = document.getElementById("round-message");
+const rockBtn = document.getElementById("rock");
+const paperBtn = document.getElementById("paper");
+const scissorsBtn = document.getElementById("scissors");
+const resetContainer = document.getElementById("reset-container");
+const gameOverMessage = document.getElementById("game-over-message");
+const resetBtn = document.getElementById("reset-btn");
 
-    function playRound(humanChoice, computerChoice) {
-    let message = "";
-    
-    const choice = humanChoice.toLowerCase();
+// Event Listeners
+rockBtn.addEventListener("click", () => playRound("rock"));
+paperBtn.addEventListener("click", () => playRound("paper"));
+scissorsBtn.addEventListener("click", () => playRound("scissors"));
+resetBtn.addEventListener("click", resetGame);
 
-    if (choice === computerChoice) {
-        message = "It's a tie!";
-    } else if (
-        (choice === "rock" && computerChoice === "scissors") || 
-        (choice === "scissors" && computerChoice === "paper") ||
-        (choice === "paper" && computerChoice === "rock")
-    ) {
-        message = `You win! ${humanChoice} beats ${computerChoice}`;
-        humanScore++;
-    } else {
-        message = `You lose! ${computerChoice} beats ${humanChoice}`;
-        computerScore++;
-    }
-
-
-    roundMessage.textContent = message;
-    scoreDisplay.textContent = `Score: You ${humanScore} - Computer ${computerScore}`;
-
-    
-
-    if (humanScore === 5) {
-        const humanWins = document.createElement("p");
-        humanWins.textContent = "🏆 You won the game!";
-        result.appendChild(humanWins);
-        resetGame();
-
-    } else if (computerScore === 5) {
-        const computerWins = document.createElement("p");
-        computerWins.textContent = "💻 Computer won the game!";
-        result.appendChild(computerWins);
-        resetGame();
-    }
+function getComputerChoice() {
+    const choices = ["rock", "paper", "scissors"];
+    const randomIndex = Math.floor(Math.random() * choices.length);
+    return choices[randomIndex];
 }
 
+function playRound(humanChoice) {
+    if (isGameOver) return;
 
+    const computerChoice = getComputerChoice();
+    let message = "";
 
+    if (humanChoice === computerChoice) {
+        message = `It's a tie! Both chose ${humanChoice}.`;
+    } else if (
+        (humanChoice === "rock" && computerChoice === "scissors") ||
+        (humanChoice === "scissors" && computerChoice === "paper") ||
+        (humanChoice === "paper" && computerChoice === "rock")
+    ) {
+        message = `You win! ${humanChoice} beats ${computerChoice}.`;
+        humanScore++;
+        humanScoreEl.textContent = humanScore;
+    } else {
+        message = `You lose! ${computerChoice} beats ${humanChoice}.`;
+        computerScore++;
+        computerScoreEl.textContent = computerScore;
+    }
+
+    roundMessageEl.textContent = message;
+
+    checkGameOver();
+}
+
+function checkGameOver() {
+    if (humanScore === 5 || computerScore === 5) {
+        isGameOver = true;
+        disableButtons(true);
+        resetContainer.classList.remove("hidden");
+
+        if (humanScore === 5) {
+            gameOverMessage.textContent = "🏆 You won the game!";
+            gameOverMessage.style.color = "#2ecc71"; // Green
+        } else {
+            gameOverMessage.textContent = "💻 Computer won the game!";
+            gameOverMessage.style.color = "#e74c3c"; // Red
+        }
+    }
+}
 
 function resetGame() {
     humanScore = 0;
     computerScore = 0;
+    isGameOver = false;
+
+    humanScoreEl.textContent = humanScore;
+    computerScoreEl.textContent = computerScore;
+    roundMessageEl.textContent = "Choose your weapon!";
     
-    
+    resetContainer.classList.add("hidden");
+    disableButtons(false);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function disableButtons(disable) {
+    rockBtn.disabled = disable;
+    paperBtn.disabled = disable;
+    scissorsBtn.disabled = disable;
+}
